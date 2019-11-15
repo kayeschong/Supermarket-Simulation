@@ -14,6 +14,13 @@
 .fontColor4 { color: #E5B4FF; }
 .fontColor5 { color: #B778D9; }
 .fontColor6 { color: #F2DAFF; }
+.bgImage1 {background-image: url("marble.jpg"); }
+.bgImage2 {background-image: url("whitetiles.jpg"); }
+.bgImage3 {background-image: url("blue.jpg"); }
+.bgImage4 {background-image: url("polygon.jpg"); }
+.bgImage5 {background-image: url("solid.jpg"); }
+.bgImage6 {background-image: url("wood.jpg"); }
+.bgImage7 {background-image: url("33591.jpg"); }
 
 /* This font is a nice web version of Arial Rounded MT Bold */
 @font-face {
