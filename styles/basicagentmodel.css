@@ -14,13 +14,56 @@
 .fontColor4 { color: #E5B4FF; }
 .fontColor5 { color: #B778D9; }
 .fontColor6 { color: #F2DAFF; }
-.bgImage1 {background-image: url("marble.jpg"); }
-.bgImage2 {background-image: url("whitetiles.jpg"); }
-.bgImage3 {background-image: url("blue.jpg"); }
-.bgImage4 {background-image: url("polygon.jpg"); }
-.bgImage5 {background-image: url("solid.jpg"); }
-.bgImage6 {background-image: url("wood.jpg"); }
-.bgImage7 {background-image: url("33591.jpg"); }
+.bgImage1 {background-image: url("marble.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover; }
+.bgImage2 {background-image: url("whitetiles.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;}
+.bgImage3 {background-image: url("blue.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover; }
+.bgImage4 {background-image: url("polygon.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover; }
+.bgImage5 {background-image: url("solid.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover; }
+.bgImage6 {background-image: url("wood.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;}
+.bgImage7 {background-image: url("33591.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;}
+.bgImage8 {background-image: url("466.jpg");
+    height : 100 %;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; }
+.bgImage9 {background-image: url("66841-OCD5KU-834.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover; }
+.bgImage10 {background-image: url("OIZV1T0.jpg");
+height : 100 %;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover; }
 
 /* This font is a nice web version of Arial Rounded MT Bold */
 @font-face {
