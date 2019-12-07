@@ -1,5 +1,9 @@
+# Instructions
+Open index.html in your browser!
+
 # TODO
 
+* Distribute controls better
 * Exit condition at end of queue
 * Higher stay probablity at cashier (paying for items)
 * Queuing statistics
