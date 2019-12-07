@@ -168,7 +168,7 @@ class NonCollidingArea  {
     this.grid.fillLocations(this.position.startRow, this.numRows, this.position.startCol, this.numCols,window.numRows);
 
     }
-    }
+  }
 
 
 
@@ -198,7 +198,34 @@ class NonCollidingAgent {
 		// simple zoning, divide into 4 quarters
 		let nrows = this.grid.numRows;
 		let ncols = this.grid.numCols;
-		let zone;
+    let zone;
+    if (col <= right_cashier.position.startCol && col >= right_cashier.position.startCol - 10) {
+      
+      // queue zone
+      if (row == right_cashier.position.startRow - 6) {
+        this.timeQueued = currentTime;
+      }
+      if (row == right_cashier.position.startRow) {
+        this.timePaying = currentTime;
+      }
+      if (row < right_cashier.position.startRow && row > right_cashier.position.startRow - 7) {
+        console.log('queuing zone');
+        console.log(row);
+        console.log(right_cashier.position.startRow - 8, right_cashier.position.startRow);
+        return [0, 5, 7, 1, 1]
+      }
+
+      // cashier zone
+      if (row <= right_cashier.position.startRow + 2 && row >= right_cashier.position.startRow + 1) {
+        console.log('cashier zone');
+        console.log(row);
+        console.log(right_cashier.position.startRow, right_cashier.position.startRow + 3);
+        return [0, 1, 30, 0, 0]
+      }
+
+
+
+    }
 		if (row < Math.floor(nrows/2)) {
 			// Upper
 			if (col <= Math.floor(ncols/2)) {
@@ -218,16 +245,16 @@ class NonCollidingAgent {
 		switch (zone) {
 			case 0:
 				// upper left, more right
-				return [1, 1, 1, 1, 5];
+				return [1, 1, 2, 1, 2];
 			case 1:
 				// upper right, more down
-				return [1, 5, 1, 1, 5];
+				return [1, 7, 2, 1, 9.5];
 			case 2:
 				// lower left, more up, right
-				return [5, 1, 1, 1, 5];
+				return [3, 1, 2, 1, 2];
 			case 3:
 				// lower right, no more up
-				return [0, 1, 1, 1, 5];
+				return [0, 2, 5, 0.2, 0.2];
 		}
 
 	}
@@ -413,17 +440,9 @@ let patients = [];
 
 let currentTime = 0;
 let statistics = [
-  {"name":"Average time in Supermarket: ", "location":{"row":1,"col":1}, "cumulativeTime": 0, "count": 0}
+  {"name":"Average time (seconds) in Supermarket: ", "location":{"row":1,"col":1}, "cumulativeTime": 0, "count": 0},
+  {"name":"Average time (seconds) in queue: ", "location":{"row":2,"col":1}, "cumulativeTime": 0, "count": 0}
 ]
-/*let statistics = [
-{"name":"Average time in clinic, Type A: ","location":{"row":doctorRow+3,"col":doctorCol-4},"cumulativeValue":0,"count":0, "rejected":0},
-{"name":"Average time in clinic, Type B: ","location":{"row":doctorRow+4,"col":doctorCol-4},"cumulativeValue":0,"count":0, "rejected":0},
-{"name":"Average percentage of patients rejected: ", "location":{"row":doctorRow+5,"col":doctorCol-4},"cumulativeValue":0, "count":0}
-];*/
-
-// We can have different types of patients (A and B) according to a probability, probTypeA.
-// This version of the simulation makes no difference between A and B patients except for the display image
-// Later assignments can build on this basic structure.
 
 let grid;
 let areas;
@@ -431,6 +450,7 @@ let staticList;
 let nextArrivalTime;
 let rate=0.5;
 let bottomRow;
+let right_cashier;
 
 // This next function is executed when the script is loaded. It contains the page initialization code.
 (function() {
@@ -457,7 +477,7 @@ function redrawWindow(){
 
 	isRunning = false; // used by simStep
 	window.clearInterval(simTimer); // clear the Timer
-	animationDelay = 550 - document.getElementById("slider1").value;
+	animationDelay = 251 - document.getElementById("slider1").value;
   simTimer = window.setInterval(simStep, animationDelay); // call the function simStep every animationDelay milliseconds
 
 
@@ -465,6 +485,8 @@ function redrawWindow(){
   nextArrivalTime = generateDiscreteExpTime(rate);
   statistics[0].cumulativeTime = 0;
   statistics[0].count = 0;
+  statistics[1].cumulativeTime = 0;
+  statistics[1].count = 0;
 
 	//resize the drawing surface; remove all its contents;
 	let drawsurface = document.getElementById("surface");
@@ -523,20 +545,28 @@ function redrawWindow(){
 
   let walls = new NonCollidingArea('Walls',scale(3),maxCols ,grid,"images/shelves1.png",topLeft,scale(1),0);
 
-  let rightPole = new NonCollidingArea('rightPole',Math.ceil((12/23)*numRows), 4, grid,"images/pole1.png",bottomRight,Math.ceil((15/23)*numRows),14);
-  let leftPole = new NonCollidingArea('rightPole', Math.ceil((12/23)*numRows), 4, grid,"images/pole2.png",bottomMiddle,scale(15),0);
+  let rightPole = new NonCollidingArea('rightPole',Math.ceil((10/23)*numRows), 4, grid,"images/pole1.png",bottomRight,Math.ceil((14/23)*numRows),14);
+  let leftPole = new NonCollidingArea('rightPole', Math.ceil((10/23)*numRows), 3, grid,"images/pole2.png",bottomMiddle,scale(14),0);
+  
+  
   let cashier1 = new NonCollidingArea('rightPole', Math.ceil((2/23)*numRows), 2, grid,"images/Cashier3.png",bottomMiddle,scale(8),1);
-  let milks1 = new NonCollidingArea('rightPole', Math.ceil((5/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(12),1);
   let cashier2 = new NonCollidingArea('rightPole', scale(2), 2, grid,"images/Cashier3.png",bottomMiddle,scale(8),6);
-  let milks2 = new NonCollidingArea('rightPole', Math.ceil((5/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(12),6);
+  
+  let midLaneBlocker = new NonCollidingArea('rightPole', Math.ceil((5/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(12),5);
+  let leftLaneBlocker = new NonCollidingArea('rightPole', Math.ceil((5/23)*numRows), 1, grid,"images/box2.png",bottomMiddle,scale(12),1);
+
+
+
+  // Reference cashier
+  right_cashier = new NonCollidingArea('rightPole', scale(2), 2, grid,"images/cashierself.png",bottomMiddle,scale(8),11);
+
   //let mistletoe = new NonCollidingArea('rightPole', scale(4), 3, grid,"images/sleigh.png",bottomMiddle,scale(12),6);
 
-  let snowGlobe =  new NonCollidingArea('rightPole', scale(3), 3, grid,"images/snow-globe.png",bottomMiddle,scale(15),5);
+  let snowGlobe =  new NonCollidingArea('rightPole', scale(3), 3, grid,"images/snow-globe.png",bottomMiddle,scale(14),5);
 
   let snowman =  new NonCollidingArea('rightPole', scale(2), 2, grid,"images/snowman.png",bottomMiddle,scale(14),7);
   //let water =  new NonCollidingArea('rightPole', scale(2), 1, grid,"images/water.png",bottomMiddle,scale(10),7);
-  let cashier3 = new NonCollidingArea('rightPole', scale(2), 2, grid,"images/cashierself.png",bottomMiddle,scale(8),11);
-  let milks3 = new NonCollidingArea('rightPole', Math.ceil((5/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(12),11);
+  let milks3 = new NonCollidingArea('rightPole', Math.ceil((15/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(18),10);
   let bag1 = new NonCollidingArea('rightPole', scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),0.3);
   let bag2 = new NonCollidingArea('rightPole',  scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),5);
   let bag3 = new NonCollidingArea('rightPole',  scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),10);
@@ -544,10 +574,6 @@ function redrawWindow(){
   let trolley1 = new NonCollidingArea('rightPole',  scale(1), 1, grid,"images/trolley2.png",bottomMiddle,scale(3),0);
   let trolley2 = new NonCollidingArea('rightPole',  scale(1), 1, grid,"images/trolley2.png",bottomMiddle,scale(3),1);
   let trolley3 = new NonCollidingArea('rightPole',  scale(1), 1, grid,"images/trolley2.png",bottomMiddle,scale(3),2);
-
-
-  //CashierArea
- ;
 
 
   //console.log(test)
@@ -609,149 +635,20 @@ function redrawWindow(){
   let shelvesitems3 = new NonCollidingArea('open', scale(0.7), 2, grid,"images/shelvesItems2.png",topRight,scale(3),17);
   let shelvesitems4 = new NonCollidingArea('open',scale(0.7), 2, grid,"images/shelvesItems2.png",topRight,scale(3),19);
 
-  //CashierArea
-  /*let rightPole = new NonCollidingArea('rightPole', 7, 4, grid,"images/pole1.png",bottomRight,11,0);
-  let leftPole = new NonCollidingArea('rightPole', 7, 4, grid,"images/pole2.png",bottomMiddle,11,7);
-  let cashier1 = new NonCollidingArea('rightPole', 2, 2, grid,"images/cashier3.png",center,3,9);
-  let cashier2 = new NonCollidingArea('rightPole', 2, 2, grid,"images/cashier3.png",center,3,14);
-  let cashier3 = new NonCollidingArea('rightPole', 2, 2, grid,"images/cashierself.png",center,3,18);
-  let iceCream = new NonCollidingArea('rightPole', 2, 2, grid,"images/iceCream.png",bottomRight,5,5);//4 to 6
-  let trolley1 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomRight,4,8);
-  let trolley2 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomRight,4,9);
-  let trolley3 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomRight,4,10);
-  //console.log(test)
-  //console.log(test.position.startCol)
-  //EntranceArea
-  let open = new NonCollidingArea('open', 3, 3, grid,"images/open.png",bottomLeft,6,1);
-  let trolley4 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomLeft,5,6);
-  let trolley5 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomLeft,5,7);
-  let trolley6 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomLeft,5,8);
-  let trolley7 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomLeft,4,6);
-  let trolley8 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomLeft,4,7);
-  let trolley9 = new NonCollidingArea('rightPole', 1, 1, grid,"images/trolley2.png",bottomLeft,4,8);
-  let entrance1 = new NonCollidingArea('rightPole', 2, 2, grid,"images/barrier.png",bottomLeft,5,10);
-  let entrance2= new NonCollidingArea('rightPole', 2, 2, grid,"images/barrier.png",bottomLeft,5,15);
-  let snowGlobe =  new NonCollidingArea('rightPole', 3, 3, grid,"images/snow-globe.png",bottomLeft,6,18);
-  let snowman=  new NonCollidingArea('rightPole', 2, 2, grid,"images/snowman.png",bottomLeft,5,20);
-  let tree =  new NonCollidingArea('rightPole', 3, 2, grid,"images/christmas-tree.png",bottomLeft,6,21);
 
-  //shelvesArea
-
-  let oats = new NonCollidingArea('open', 2, 4, grid,"images/oatshalf1.png",topLeft,6,6);
-  let detergent1 = new NonCollidingArea('open', 2, 4, grid,"images/detergenthalf1.png",topLeft,12,6);
-  let bread = new NonCollidingArea('open', 2, 4, grid,"images/breadhalf1.png",topLeft,6,16);
-  let detergent2 = new NonCollidingArea('open', 2, 4, grid,"images/detergenthalf2.png",topLeft,12,16);
-  let roundSauces = new NonCollidingArea('open', 3, 2, grid,"images/sauces3.png",topLeft,8,12);
-
-  //clothesArea
-  let direction = new NonCollidingArea('open', 3, 2, grid,"images/directions.png",topMiddle,9,5);
-  let clothes1 = new NonCollidingArea('open', 4, 5, grid,"images/clothes1.png",topMiddle,5,15);
-  let clothes2 = new NonCollidingArea('open', 2, 4, grid,"images/clothes2.png",topMiddle,7,20);
-
-  //Walls
-  let fruit1 = new NonCollidingArea('open', 2, 3, grid,"images/fruits3.png",topLeft,2,2);
-  let fruit2 = new NonCollidingArea('open', 2, 3, grid,"images/Fruit.png",topLeft,2,5);
-  //let weight = new NonCollidingArea('open', 2, 3, grid,"images/weight.png",topLeft,2,9);
-  let vegetable1 = new NonCollidingArea('open', 2, 3, grid,"images/vegetables.png",topLeft,2,13);
-  let meat = new NonCollidingArea('open', 3, 5, grid,"images/meat.png",topLeft,1,19);
-  let seafood = new NonCollidingArea('open', 3, 5, grid,"images/seafood.png",topLeft,1,24);
-  let fridge1 = new NonCollidingArea('open', 3, 2, grid,"images/cheese2.png",topRight,1,5);
-  let fridge2 = new NonCollidingArea('open', 3, 2, grid,"images/drinks2.png",topRight,1,3);
-  let fridge3 = new NonCollidingArea('open', 3, 2, grid,"images/drinks3.png",topRight,1,1);
-  let bread2 = new NonCollidingArea('open', 3, 2, grid,"images/bread2.png",topRight,1,-1);
-  //let drinks1 = new NonCollidingArea('open', 3, 2, grid,"images/drinks4.png",topRight,1,-5);*/
-
-
-
-
-
-	// console.log(grid.locations);
-	/*let waitingRoom = new Area('Waiting Area', 4, 3, 19, 3,"images/divide.png")
-	let stagingRoom = new Area('Staging Area', doctorRow - 1, 1, doctorCol - 2, 5, "images/divide.png");
-	console.log(grid.locations);
-  let walls = new NonCollidingArea('Walls', 1, 4, 1,maxCols-1, grid,"images/shelves1.png");
-  let light1 = new NonCollidingArea('Walls', 1, 1, 3,1, grid,"images/lights.png");
-	let block1 = new NonCollidingArea('Block 1', firstBlockRow+5, 6, firstBlockCol, 2, grid,"images/shelves1.png");
-	let block2 = new NonCollidingArea('Block 1', firstBlockRow+14, 6, firstBlockCol, 2, grid,"images/shelves1.png");
-  let block3 = new NonCollidingArea('Block 1', firstBlockRow+5, 6, firstBlockCol+7, 2, grid,"images/shelves1.png");
-	let block4 = new NonCollidingArea('Block 1', lastBlockRow, 6, firstBlockCol+7, 2, grid,"images/shelves1.png");
-  let directions = new NonCollidingArea('Block 1', lastBlockRow-6, 3, firstBlockCol+11, 2, grid,"images/directions.png");
-	let meat = new NonCollidingArea('Block 1', firstBlockRow, 3,firstBlockCol+12, 5, grid,"images/meat.png");
-  let seafood = new NonCollidingArea('Block 1', firstBlockRow, 3,firstBlockCol+17, 5, grid,"images/seafood.png");
-  let cheese2 = new NonCollidingArea('Block 1', firstBlockRow, 3,firstBlockCol+24, 2, grid,"images/cheese2.png");
-  let drinks2 = new NonCollidingArea('Block 1', firstBlockRow, 3,firstBlockCol+26, 2, grid,"images/drinks2.png");
-  let drinks3 = new NonCollidingArea('Block 1', firstBlockRow, 3,firstBlockCol+28, 2, grid,"images/drinks3.png");
-  let bread2 = new NonCollidingArea('Block 1', firstBlockRow, 3,firstBlockCol+30, 2, grid,"images/bread2.png");
-  let sauces3 = new NonCollidingArea('Block 1', firstBlockRow+8, 3,firstBlockCol+4, 2, grid,"images/sauces3.png");
-  let clothes1 = new NonCollidingArea('Block 1', firstBlockRow+5, 4,firstBlockCol+18, 5, grid,"images/clothes1.png");
-  let clothes2 = new NonCollidingArea('Block 1', firstBlockRow+7, 2,firstBlockCol+23, 4, grid,"images/clothes2.png");
-  let toys1 = new NonCollidingArea('Block 1', firstBlockRow+12, 2,firstBlockCol+18, 4, grid,"images/toys3.png");
-  let tree = new NonCollidingArea('Block 1', firstBlockRow+11, 3,firstBlockCol+23, 3, grid,"images/christmas-tree.png");
-  let snowman  =  new NonCollidingArea('Block 1', firstBlockRow+12, 2,firstBlockCol+25, 2, grid,"images/snowman.png");
-  let snowGlobe = new NonCollidingArea('Block 1', firstBlockRow+11, 3,firstBlockCol+20, 3, grid,"images/snow-globe.png");
-
-
-  let fruits = new NonCollidingArea('Block 1', firstBlockRow+1, 2,firstBlockCol, 3, grid,"images/Fruit.png");
-  let fruits2 = new NonCollidingArea('Block 1', firstBlockRow+1, 2,firstBlockCol-3, 3, grid,"images/fruits3.png");
-  let vegetables = new NonCollidingArea('Block 1', firstBlockRow+1, 2,firstBlockCol+7, 3, grid,"images/vegetables.png");
-  let oats = new NonCollidingArea('Block 1', firstBlockRow+5, 2,firstBlockCol, 4, grid,"images/oatshalf1.png");
-  let iceCream = new NonCollidingArea('Block 1', firstBlockRow+18, 3,firstBlockCol, 3, grid,"images/iceCream.png");
-  let middleCold = new NonCollidingArea('Block 1', firstBlockRow+19, 2,firstBlockCol+3, 4, grid,"images/middle_cold_storage.png");
-  let iceCreamLogo = new NonCollidingArea('Block 1', firstBlockRow+16, 1.5,firstBlockCol-2, 2, grid,"images/iceCreamLogo.png");
-
-
-  let bread = new NonCollidingArea('Block 1', firstBlockRow+5, 2,firstBlockCol+6, 4, grid,"images/breadhalf1.png");
-  let detergent1 = new NonCollidingArea('Block 1', firstBlockRow+12, 2,firstBlockCol, 4, grid,"images/detergenthalf1.png");
-  let detergent2 = new NonCollidingArea('Block 1', firstBlockRow+12, 2,firstBlockCol+6, 4, grid,"images/detergenthalf2.png");
-	let block5 = new NonCollidingArea("Block 4", firstBlockRow+1, 2,firstBlockCol+14, 8, grid,"images/archive.png");
-  let block6 = new NonCollidingArea("Block 4", firstBlockRow+1, 2,firstBlockCol+14, 8, grid,"images/archive.png");
-  let cashier1 = new NonCollidingArea("Cashier", lastBlockRow+5, 2, firstBlockCol+14, 2, grid,"images/cashier3.png");
-  let cashier2 = new NonCollidingArea("Cashier", lastBlockRow+5, 2, firstBlockCol+18, 2, grid,"images/cashier3.png");
-  let cashier3 = new NonCollidingArea("Cashier", lastBlockRow+3, 1.5, firstBlockCol+22, 1.5, grid,"images/cashierself.png");
-  let cashier4 = new NonCollidingArea("Cashier", lastBlockRow+3, 1.5, firstBlockCol+26, 1.5, grid,"images/cashierself.png");
-  let cashier5 = new NonCollidingArea("Cashier", lastBlockRow+7, 1.5, firstBlockCol+22, 1.5, grid,"images/cashierself.png");
-  let cashier6 = new NonCollidingArea("Cashier", lastBlockRow+7, 1.5, firstBlockCol+26, 1.5, grid,"images/cashierself.png");
-  let open = new NonCollidingArea("open", firstBlockRow+25, 3, firstBlockCol, 3, grid,"images/open.png");
-  let entrance1 = new Area ('entrance1',firstBlockRow+23,2,firstBlockCol+4,2,'images/barrier.png')
-  let entrance2 = new Area ('entrance1',firstBlockRow+23,2,firstBlockCol+6.5,2,'images/barrier.png')
-  let entrance3 = new Area ('entrance1',firstBlockRow+23,2,firstBlockCol+9,2,'images/barrier.png')*
-
-  //let cashierArea =new Area("CashierArea", lastBlockRow+5, 2, firstBlockCol+12, 25, grid,"images/cashier_floor.png");
-
-	areas = [test,walls,light1,oats,bread,directions,meat,cashier1,cashier2,cashier3,cashier4,cashier5,cashier6,seafood,detergent1,detergent2,fruits,fruits2,vegetables,open,cheese2
-,drinks2,drinks3,bread2,sauces3,clothes1,clothes2,middleCold,iceCream,snowGlobe,tree,snowman,entrance1,entrance2,entrance3];*/
-
-/*  areas = [walls,rightPole,leftPole,cashier1,cashier2,cashier3,iceCream,trolley1,trolley2,trolley3,
-    open,trolley4,trolley5,trolley6,trolley7,trolley8,trolley9,entrance1,entrance2,snowGlobe,tree,snowman,
-  oats,detergent1,bread,detergent2,roundSauces,
-clothes1,clothes2,direction,
-fruit1,fruit2,vegetable1,meat,seafood,fridge1,fridge2,fridge3,bread2]*///,trolley1,trolley2,trolley3,trolley4,trolley5,trolley6,trolley7,trolley8,trolley9
-  areas = [walls,iceCream, rightPole, leftPole,milks1,milks2,milks3, cashier1,cashier2,cashier3,bag1,bag2,bag3,trolley1,trolley2,trolley3,trolley4,trolley5,trolley6,trolley7,trolley8,trolley9,open,
+  areas = [walls,iceCream, rightPole, leftPole,leftLaneBlocker,midLaneBlocker, milks3, cashier1,cashier2,right_cashier,bag1,bag2,bag3,trolley1,trolley2,trolley3,trolley4,trolley5,trolley6,trolley7,trolley8,trolley9,open,
   snowGlobe,tree,snowman,entrance1,entrance2,oats,detergent1,detergent2,roundSauces,bread,direction, clothes1,clothes2,fruit1,fruit2,vegetable1,vegeMachine,seafood,meat,cottonCandy,popcorn,rotate,//,water,popcorn,
   bread2,fridge1,fridge2,fridge3,shelvesitems1,shelvesitems2,shelvesitems3,shelvesitems4,toysMachine,ginger, entranceBlocker];
   //areas = [rightPole]
 
-  const firstItemRow = firstBlockRow+6
-  const firstItemCol = firstBlockCol
+  const firstItemRow = firstBlockRow+6;
+  const firstItemCol = firstBlockCol;
 
 
 
 	let doctor = new Static(1,'Doctor',lastBlockRow+5,firstBlockCol+14,"images/cashier.png",grid)
 	let receptionist = new Static(2,'Receptionist',receptionistRow,receptionistCol,"images/cashier.png",grid)
-	/*let trolley1 = new Static(3,'Trolley',14,firstBlockCol,"images/trolley2.png",grid)
-	let trolley2 = new Static(3,'Trolley',14,firstBlockCol+1,"images/trolley2.png",grid)
-	let trolley3 = new Static(3,'Trolley',14,firstBlockCol+2,"images/trolley2.png",grid)
-  let trolley4 = new Static(3,'Trolley',15,firstBlockCol,"images/trolley2.png",grid)
-  let trolley5 = new Static(3,'Trolley',15,firstBlockCol+1,"images/trolley2.png",grid)
-  let trolley6 = new Static(3,'Trolley',15,firstBlockCol+2,"images/trolley2.png",grid)
-  let bag1 = new Static(3,'Bag1',3,firstBlockCol+13,"images/bags.png",grid)
-	let milk = new Static(4,'Milk',firstItemRow,firstItemCol,"images/milk.png",grid)
-	let cheese = new Static(5,'Cheese',firstItemRow+1,firstItemCol,"images/cheese.png",grid)
-  let drinks = new Static(4,'Drinks',firstItemRow,firstItemCol+2,"images/signboard.png",grid)
-  let basket = new Static(4,'Basket',firstBlockRow+2,firstBlockCol+3,"images/basket.png",grid)
-  staticList = []
-	//staticList = [trolley1,trolley2, trolley3,trolley4,trolley5, trolley6, basket,bag1]*/
-  staticList = []
+	staticList = []
 
 
 
@@ -961,12 +858,19 @@ function updatePatient(patientIndex){
   patient.move();
 
   //Exit Condition
-	if (patient.location.col == maxCols) {
+  let cashier_row = right_cashier.position.startRow + right_cashier.numRows;
+  let cashier_col = right_cashier.position.startCol + right_cashier.numCols;
+	if (patient.location.col >= cashier_col - 10 && patient.location.row >= cashier_row + 3) {
     patient.state = EXITED;
-    let timeInSystem = currentTime - patient.timeEntered;
+    // free up patient's location
+    grid.freeLocation(patient.location)
     // update stats
+    let timeInSystem = currentTime - patient.timeEntered;
+    let timeInQueue = patient.timePaying - patient.timeQueued - 10; 
     statistics[0].cumulativeTime += timeInSystem;
     statistics[0].count += 1;
+    statistics[1].cumulativeTime += timeInQueue;
+    statistics[1].count += 1;
 	}
 }
 
