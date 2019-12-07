@@ -1,44 +1,92 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" >
-<head>
-<title>Non Colliding Agent Model</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Supermarket Simulation</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="shortcut icon" type="image/png" href="images/favicon1.png"/>
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="homepage is-preload">
+		<div id="page-wrapper">
 
+			<!-- Header -->
+				<div id="header">
 
-		<!-- d3 is for data visualization -->
-		<script type="text/javascript" src="lib/d3.min.js"></script>
+					<!-- Inner -->
+						<div class="inner">
+							<header>
+								<h1><a href="index.html" id="logo">Supermarket Simulation</a></h1>
+								<hr />
+								<p>An interactive simulation of a supermarket :) </p>
+							</header>
 
+							<footer>
+								<a href="pages/Content.html" class="button circled scrolly">Start</a>
+								
+								&emsp;
+								&emsp;
+								<a href="pages/supermarket/index.html" class="button circled scrolly">Simulate</a>
+							</footer>
+						</div>
 
-		<!-- custom styles for this application -->
-		<link rel="stylesheet" href="styles/basicagentmodel.css" media="screen">
+					<!-- Navigation toolbar -->
+						
+				</div>
 
-</head>
-<!-- Set class to official for more formal font; unofficial for informal font -->
-<body class="official bgImage8">
+			<!-- Banner 
+				<section id="banner">
+					<header>
+						<h2> Welcome to <strong>SM Simulae</strong>.</h2>
+						<p>
+							A simulation of a U-shaped supermarket. <br>
+						</p>
+					</header>
+					<footer>
+						
+					</footer>
+				</section> -->
 
-	<!-- The surface is the main playing field for the game -->
+		
+				
 
-	<svg  id="surface" style="width:100% height:100%" xmlns="http://www.w3.org/2000/svg" version="1.1" onclick="toggleSimStep();">
-	</svg>
+			<!-- Footer -->
+				<div id="footer">
+					
+						<div class="row">
 
-	<div id="title"  style="position:absolute;bottom:0;left:0">Basic Agent-Based Model</div>
+							<div class="col-12">
 
-	<div id="controls" style="position:absolute;bottom:0;left:35%">Animation Speed:
-		<input id="slider1" type="range" min="0" value:"275" max="500" step="10" onchange="redrawWindow();" />
-	</div>
-	<div id="controls2" style="position:absolute;bottom:2%;left:35%">Arrival Rate:
-		<input id="slider2" type="range" min="0" value:"0.5" max="1" step="0.1" onchange="redrawWindow();" />
-	</div>
+								<!-- Contact -->
+									<section class="contact">
+										<header>
 
-	<a id="credits" href="https://www.freeiconspng.com/" style="position:absolute;bottom:0;right:0">Svg Icon Supermarket</a>
-  <a id ='credits' href="https://www.freepik.com/free-photos-vectors/background" style="position:absolute;bottom:0;left : 72%">freepik</a>
-	<a id ='credits' href="https://www.flaticon.com/" style="position:absolute;bottom:0;left : 65%">flaticon</a>
+											<h3>Simulation Modeling & Analysis 40.015</h3>
+										</header>
+										<a href="https://esd.sutd.edu.sg/" target="_blank"><img src="images/esd.png" alt=""></a>
+										
+									</section>
 
+								
 
+							</div>
 
-	<!-- Anything below this line should be a popup window or dialog or a late-loading library -->
+						</div>
+					<!-- </div> -->
+				</div>
 
-	<script type="text/javascript" src="lib/NonCollidingAgentModel.js"></script>
+		</div>
 
-</body>
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
 </html>
