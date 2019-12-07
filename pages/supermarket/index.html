@@ -24,14 +24,23 @@
 	<div id="title"  style="position:absolute;bottom:0;left:0">Basic Agent-Based Model</div>
 
 	<div id="controls" style="position:absolute;bottom:0;left:35%">Animation Speed:
-		<input id="slider1" type="range" min="0" value:"275" max="500" step="10" onchange="redrawWindow();" />
+		<input id="slider1" type="range" min="0" value:"50" max="250" step="10" onchange="redrawWindow();" />
 	</div>
-	<div id="controls2" style="position:absolute;bottom:2%;left:35%">Arrival Rate:
-		<input id="slider2" type="range" min="0" value:"0.5" max="1" step="0.1" onchange="redrawWindow();" />
+	<div id="controls2" style="position:absolute;bottom:4%;left:37%">Arrival Rate:
+		<input id="slider2" type="range" min="0.1" value:"0.5" max="1" step="0.1" onchange="redrawWindow();" />
+		<p><span id="rate"></span></p>
 	</div>
-
+	<script>
+		var slider = document.getElementById("slider2");
+		var output = document.getElementById("rate");
+		output.innerHTML = slider.value;
+		
+		slider.oninput = function() {
+			output.innerHTML = this.value;
+		}
+	</script>
 	<a id="credits" href="https://www.freeiconspng.com/" style="position:absolute;bottom:0;right:0">Svg Icon Supermarket</a>
-  <a id ='credits' href="https://www.freepik.com/free-photos-vectors/background" style="position:absolute;bottom:0;left : 72%">freepik</a>
+  	<a id ='credits' href="https://www.freepik.com/free-photos-vectors/background" style="position:absolute;bottom:0;left : 72%">freepik</a>
 	<a id ='credits' href="https://www.flaticon.com/" style="position:absolute;bottom:0;left : 65%">flaticon</a>
 
 
