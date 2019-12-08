@@ -39,16 +39,78 @@
 							<header>
 								<h2><a href="#">Simulation Design</a></h2>
 								<p>
-									Link to Document : <a href="../assets/deliverables/Simulation Design.pdf" class="button2 circled scrolly" target="_blank">Simulation Design</a>
+									Link to Document : <a href="../assets/deliverables/Mathematical Models.pdf" class="button2 circled scrolly" target="_blank">Mathematical Models</a>
 									<!-- <a href="../assets/deliverables/State.jpg" class="button2 circled scrolly" target="_blank">State Diagram</a> -->
 								</p>
 							</header>
-							<a href="#" class="image featured"><img src="../images/State.png" alt="" /></a>
 							<p>
-								In the design of our simulation, we carefully considered the various methods of simulation studied in class. For this particular project, we chose to use Agent-Based Modelling as our basic flow for the simulator. This was because using the ball as an agent would represent an actual football match closest. Throughout the project, we came up with 2 iterations of the simulator. The first version was revised after testing and experimentation.
-
+									For the design of our simulation, we tried to blend our learnings from previous courses with that of the simulation module. 
+							</p>
+							<p>
+									We decided on Agent Based Modelling as we wanted to best simulate how customers in a supermarket would behave in reality.
+									In the prototyping process, we realized that Object Oriented programming played especially nicely with Agent Based Simulations and planned our architecture using this logic.
+									To make it even more realistic, we also wanted to make the customers fully Non-Colliding among themselves as well as with other entities, customers dont like banging into each other after all.
+							</p>
+							<p>
+									After deciding our goals, we used our learnings from Digital World and Engineering Systems Architecture to conceptualize the relationships.
+							</p>
+							<img class="image featured" src="../images/Top level Non-Colliding architecture.png" alt="" />
+							<p> 
+								For the movement of our agents, we model them as taking a single step with 5 possible choices.
+								<ul>
+										<li>Move up</li>
+										<li>Move down</li>
+										<li>Stay in current position</li>
+										<li>Move left</li>
+										<li>Move right</li>
+								</ul>
+							</p>
+							<p>A map tracking all the locations of entities is updated whenever an agent moves. 
+								To efficiently ensure a no collisions happen, we enforce the logic at the agent level, 
+								whereby the agents' possible movements are conditional on them being non-colliding.
+								Thus, if a certain location is filled, none of the agents will be able to move to that location.
+								
+							</p>
+							<p>
+								Each step is probabilistic with an array of weights given to different zones on the grid, 
+								the weight directions are approximately described by the arrow vectors below.
+								The ratios of the weights act as the odds for each direction.
+								We iterate through each avaiable agent and move them according to this logic.
+							</p>
+								
+							<img class="image featured" src="../images/Non-Colliding Agent Movement.png" alt="" />
+							
+							<p>
+								The base directional weights are divided into 4 quarters based on the layout of our supermarket, 
+								these will be modified generatively depending on the agent's surrounding entities.
 							</p>
 							
+							<img class="image featured" src="../images/Direction vector map.png" alt="" />
+							
+							<p> By implementing the individual logic, running the simulation allows us to aggregate it to top level behaviour, 
+								which achieves our objective of agent based modelling.
+							</p>
+							<br>
+							<br>
+							<br>
+							<header>
+								<h2>
+									Generating random arrivals
+								</h2>
+							</header>
+							<br>
+
+							<p>
+								The second half of simulation introduced generation of random variables and so 
+								we used Poisson Processes to simulate the arrival of the customers with the option of thinning the Poisson process.
+								In our Simulation, we allow the user to vary both the arrival rate and thinning probability.
+							</p>
+							<p>
+								Diagrams of the Mathematical formulation are in the link above.
+							</p>
+							<p>
+								Press "Simulate" at the top of the page to view the simulation.
+							</p>
 					</div>
 
 				</div>
