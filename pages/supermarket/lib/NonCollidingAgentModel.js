@@ -184,7 +184,7 @@ class NonCollidingAgent {
 		let ncols = this.grid.numCols;
     let zone;
     if (col <= right_cashier.position.startCol && col >= right_cashier.position.startCol - 10) {
-      
+
       if (row == right_cashier.position.startRow - 6) {
         this.timeQueued = currentTime;
       }
@@ -435,7 +435,7 @@ function redrawWindow(){
   simTimer = window.setInterval(simStep, animationDelay); // call the function simStep every animationDelay milliseconds
 
   rate = document.getElementById("slider2").value;
-  
+
   nextArrivalTime = generateDiscreteExpTime(rate);
   statistics[0].cumulativeTime = 0;
   statistics[0].count = 0;
@@ -490,7 +490,7 @@ function redrawWindow(){
     scale2 = Math.ceil(row/23*maxRows)
     return(scale2)
   }
-  
+
   // Need to specify the label,numrow,numco,grid,img,relativePosition,how far right or how far left from the relative position
 
 
@@ -502,11 +502,11 @@ function redrawWindow(){
 
   let rightPole = new NonCollidingArea('rightPole',Math.ceil((10/23)*numRows), 4, grid,"images/pole1.png",bottomRight,Math.ceil((14/23)*numRows),14);
   let leftPole = new NonCollidingArea('leftPole', Math.ceil((10/23)*numRows), 3, grid,"images/pole2.png",bottomMiddle,scale(14),0);
-  
-  
+
+
   let cashier1 = new NonCollidingArea('cashier1', Math.ceil((2/23)*numRows), 2, grid,"images/Cashier3.png",bottomMiddle,scale(8),1);
   let cashier2 = new NonCollidingArea('cashier2', scale(2), 2, grid,"images/Cashier3.png",bottomMiddle,scale(8),6);
-  
+
   let midLaneBlocker = new NonCollidingArea('midLaneBlocker', Math.ceil((5/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(12),5);
   let leftLaneBlocker = new NonCollidingArea('leftLaneBlocker', Math.ceil((5/23)*numRows), 1, grid,"images/box2.png",bottomMiddle,scale(12),1);
 
@@ -517,7 +517,7 @@ function redrawWindow(){
 
   let snowGlobe =  new NonCollidingArea('snowGlobe', scale(3), 3, grid,"images/snow-globe.png",bottomMiddle,scale(14),5);
 
-  let snowman =  new NonCollidingArea('snowman', scale(2), 2, grid,"images/snowman.png",bottomMiddle,scale(14),7);
+  let snowman =  new NonCollidingArea('snowman', scale(2), 2, grid,"images/snowman.png",bottomMiddle,scale(13),7);
   let milks3 = new NonCollidingArea('milks3', Math.ceil((15/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(18),10);
   let bag1 = new NonCollidingArea('bag1', scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),0.3);
   let bag2 = new NonCollidingArea('bag2',  scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),5);
@@ -589,10 +589,7 @@ function redrawWindow(){
   areas = [walls,iceCream, rightPole, leftPole,leftLaneBlocker,midLaneBlocker, milks3, cashier1,cashier2,right_cashier,bag1,bag2,bag3,trolley1,trolley2,trolley3,trolley4,trolley5,trolley6,trolley7,trolley8,trolley9,open,
   snowGlobe,tree,snowman,entrance1,entrance2,oats,detergent1,detergent2,roundSauces,bread,direction, clothes1,clothes2,fruit1,fruit2,vegetable1,vegeMachine,seafood,meat,cottonCandy,popcorn,rotate,//,water,popcorn,
   bread2,fridge1,fridge2,fridge3,shelvesitems1,shelvesitems2,shelvesitems3,shelvesitems4,toysMachine,ginger, entranceBlocker];
-  //areas = [rightPole]
 
-  const firstItemRow = firstBlockRow+6;
-  const firstItemCol = firstBlockCol;
 
   currentTime = 0;
   staticList = [];
@@ -631,15 +628,15 @@ function updateSurface(){
 	.attr("height",  function(d) {return d.numRows*cellHeight+'px';})
 	.attr("preserveAspectRatio", "none")
   .attr("xlink:href",function(d){return d.url;})
-  
+
 	let allcustomers = surface.selectAll(".customer").data(customers);
 
-  
-  allcustomers.exit().remove(); 
-  
+
+  allcustomers.exit().remove();
+
 
   let newcustomers = allcustomers.enter().append("g").attr("class","customer");
-  
+
 	newcustomers.append("svg:image")
 	 .attr("x",function(d){let cell= getLocationCell(d.location); return cell.x+"px";})
 	 .attr("y",function(d){let cell= getLocationCell(d.location); return cell.y+"px";})
@@ -762,9 +759,9 @@ function addDynamicAgents() {
 }}
 
 function updatePatient(customerIndex){
-  
-  customerIndex = Number(customerIndex); 
-  
+
+  customerIndex = Number(customerIndex);
+
 	let customer = customers[customerIndex];
   customer.move();
 
@@ -777,7 +774,7 @@ function updatePatient(customerIndex){
     grid.freeLocation(customer.location)
     // update stats
     let timeInSystem = currentTime - customer.timeEntered;
-    let timeInQueue = customer.timePaying - customer.timeQueued - 10; 
+    let timeInQueue = customer.timePaying - customer.timeQueued - 10;
     statistics[0].cumulativeTime += timeInSystem;
     statistics[0].count += 1;
     statistics[1].cumulativeTime += timeInQueue;
