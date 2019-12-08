@@ -11,7 +11,7 @@ class Grid {
         return this.locations[row][col];
 	}
 
-	isFull(location) {
+	  isFull(location) {
         return !this.isEmpty(location);
     }
 
@@ -185,15 +185,15 @@ class NonCollidingAgent {
     let zone;
     if (col <= right_cashier.position.startCol && col >= right_cashier.position.startCol - 10) {
       
-      // queue zone
       if (row == right_cashier.position.startRow - 6) {
         this.timeQueued = currentTime;
       }
       if (row == right_cashier.position.startRow) {
         this.timePaying = currentTime;
       }
+
+      // queue zone
       if (row < right_cashier.position.startRow && row > right_cashier.position.startRow - 7) {
-        console.log('queuing zone');
         console.log(row);
         console.log(right_cashier.position.startRow - 8, right_cashier.position.startRow);
         return [0, 5, 7, 1, 1]
@@ -201,14 +201,10 @@ class NonCollidingAgent {
 
       // cashier zone
       if (row <= right_cashier.position.startRow + 2 && row >= right_cashier.position.startRow + 1) {
-        console.log('cashier zone');
         console.log(row);
         console.log(right_cashier.position.startRow, right_cashier.position.startRow + 3);
         return [0, 1, cashierDelay, 0, 0]
       }
-
-
-
     }
 		if (row < Math.floor(nrows/2)) {
 			// Upper
@@ -277,7 +273,7 @@ class NonCollidingAgent {
 		}
 
 		if (colRight == this.grid.numCols) {
-
+      weights[4] == 0;
 		} else if (this.grid.isFull(rightLoc)) {
 			weights[4] = 0;
 		}
@@ -391,8 +387,8 @@ const urlCashier2 = "images/cashier.png";
 
 const EXITED = 0;
 
-// patients is a dynamic list, initially empty
-let patients = [];
+// customers is a dynamic list, initially empty
+let customers = [];
 
 let currentTime = 0;
 let statistics = [
@@ -435,7 +431,7 @@ function redrawWindow(){
 
 	isRunning = false; // used by simStep
 	window.clearInterval(simTimer); // clear the Timer
-	animationDelay = 251 - document.getElementById("slider1").value;
+	animationDelay = 250 - document.getElementById("slider1").value;
   simTimer = window.setInterval(simStep, animationDelay); // call the function simStep every animationDelay milliseconds
 
   rate = document.getElementById("slider2").value;
@@ -487,47 +483,45 @@ function redrawWindow(){
   bottomRight = {'label' : 9, 'row' : bottomRow,'col' : rightCol}
   console.log(topLeft.row)
 
-
-
-	grid = new Grid(numRows, numCols);
   const firstBlockRow = 2
   const firstBlockCol = 6
   const lastBlockRow = firstBlockRow+14
-
-  // Need to specify the label,numrow,numco,grid,img,relativePosition,how far right or how far left from the relative position
-
   function scale(row,maxRows = window.numRows){
     scale2 = Math.ceil(row/23*maxRows)
     return(scale2)
   }
+  
+  // Need to specify the label,numrow,numco,grid,img,relativePosition,how far right or how far left from the relative position
+
+
+
+	grid = new Grid(numRows, numCols);
+
 
   let walls = new NonCollidingArea('Walls',scale(3),maxCols ,grid,"images/shelves1.png",topLeft,scale(1),0);
 
   let rightPole = new NonCollidingArea('rightPole',Math.ceil((10/23)*numRows), 4, grid,"images/pole1.png",bottomRight,Math.ceil((14/23)*numRows),14);
-  let leftPole = new NonCollidingArea('rightPole', Math.ceil((10/23)*numRows), 3, grid,"images/pole2.png",bottomMiddle,scale(14),0);
+  let leftPole = new NonCollidingArea('leftPole', Math.ceil((10/23)*numRows), 3, grid,"images/pole2.png",bottomMiddle,scale(14),0);
   
   
-  let cashier1 = new NonCollidingArea('rightPole', Math.ceil((2/23)*numRows), 2, grid,"images/Cashier3.png",bottomMiddle,scale(8),1);
-  let cashier2 = new NonCollidingArea('rightPole', scale(2), 2, grid,"images/Cashier3.png",bottomMiddle,scale(8),6);
+  let cashier1 = new NonCollidingArea('cashier1', Math.ceil((2/23)*numRows), 2, grid,"images/Cashier3.png",bottomMiddle,scale(8),1);
+  let cashier2 = new NonCollidingArea('cashier2', scale(2), 2, grid,"images/Cashier3.png",bottomMiddle,scale(8),6);
   
-  let midLaneBlocker = new NonCollidingArea('rightPole', Math.ceil((5/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(12),5);
-  let leftLaneBlocker = new NonCollidingArea('rightPole', Math.ceil((5/23)*numRows), 1, grid,"images/box2.png",bottomMiddle,scale(12),1);
-
-
+  let midLaneBlocker = new NonCollidingArea('midLaneBlocker', Math.ceil((5/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(12),5);
+  let leftLaneBlocker = new NonCollidingArea('leftLaneBlocker', Math.ceil((5/23)*numRows), 1, grid,"images/box2.png",bottomMiddle,scale(12),1);
 
   // Reference cashier
-  right_cashier = new NonCollidingArea('rightPole', scale(2), 2, grid,"images/cashierself.png",bottomMiddle,scale(8),11);
+  right_cashier = new NonCollidingArea('right_cashier', scale(2), 2, grid,"images/cashierself.png",bottomMiddle,scale(8),11);
 
-  //let mistletoe = new NonCollidingArea('rightPole', scale(4), 3, grid,"images/sleigh.png",bottomMiddle,scale(12),6);
 
-  let snowGlobe =  new NonCollidingArea('rightPole', scale(3), 3, grid,"images/snow-globe.png",bottomMiddle,scale(14),5);
 
-  let snowman =  new NonCollidingArea('rightPole', scale(2), 2, grid,"images/snowman.png",bottomMiddle,scale(14),7);
-  //let water =  new NonCollidingArea('rightPole', scale(2), 1, grid,"images/water.png",bottomMiddle,scale(10),7);
-  let milks3 = new NonCollidingArea('rightPole', Math.ceil((15/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(18),10);
-  let bag1 = new NonCollidingArea('rightPole', scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),0.3);
-  let bag2 = new NonCollidingArea('rightPole',  scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),5);
-  let bag3 = new NonCollidingArea('rightPole',  scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),10);
+  let snowGlobe =  new NonCollidingArea('snowGlobe', scale(3), 3, grid,"images/snow-globe.png",bottomMiddle,scale(14),5);
+
+  let snowman =  new NonCollidingArea('snowman', scale(2), 2, grid,"images/snowman.png",bottomMiddle,scale(14),7);
+  let milks3 = new NonCollidingArea('milks3', Math.ceil((15/23)*numRows), 3, grid,"images/box2.png",bottomMiddle,scale(18),10);
+  let bag1 = new NonCollidingArea('bag1', scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),0.3);
+  let bag2 = new NonCollidingArea('bag2',  scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),5);
+  let bag3 = new NonCollidingArea('bag3',  scale(1), 0.8, grid,"images/bags.png",bottomMiddle,scale(7),10);
 
   let trolley1 = new NonCollidingArea('rightPole',  scale(1), 1, grid,"images/trolley2.png",bottomMiddle,scale(3),0);
   let trolley2 = new NonCollidingArea('rightPole',  scale(1), 1, grid,"images/trolley2.png",bottomMiddle,scale(3),1);
@@ -602,7 +596,7 @@ function redrawWindow(){
 
   currentTime = 0;
   staticList = [];
-  patients = [];
+  customers = [];
 
 
 
@@ -636,45 +630,29 @@ function updateSurface(){
 	.attr("width",  function(d) {return d.numCols*cellWidth+'px';})
 	.attr("height",  function(d) {return d.numRows*cellHeight+'px';})
 	.attr("preserveAspectRatio", "none")
-	.attr("xlink:href",function(d){return d.url;})
-  //.attr('transform', 'rotate(270)')
+  .attr("xlink:href",function(d){return d.url;})
+  
+	let allcustomers = surface.selectAll(".customer").data(customers);
 
-	//.style("fill", function(d) {return d.fillColor; })
-	//.style("stroke", function(d) {return d.outlineColor})
-	//.style("stroke-width", function(d) {return d.outlineWidth})
+  
+  allcustomers.exit().remove(); 
+  
 
-
-
-	// This function is used to create or update most of the svg elements on the drawing surface.
-	// See the function removeDynamicAgents() for how we remove svg elements
-
-	//Select all svg elements of class "patient" and map it to the data list called patients
-	let allpatients = surface.selectAll(".patient").data(patients);
-
-	// If the list of svg elements is longer than the data list, the excess elements are in the .exit() list
-	// Excess elements need to be removed:
-	allpatients.exit().remove(); //remove all svg elements associated with entries that are no longer in the data list
-	// (This remove function is needed when we resize the window and re-initialize the patients array)
-
-	// If the list of svg elements is shorter than the data list, the new elements are in the .enter() list.
-	// The first time this is called, all the elements of data will be in the .enter() list.
-	// Create an svg group ("g") for each new entry in the data list; give it class "patient"
-	let newpatients = allpatients.enter().append("g").attr("class","patient");
-	//Append an image element to each new patient svg group, position it according to the location data, and size it to fill a cell
-	// Also note that we can choose a different image to represent the patient based on the patient type
-	newpatients.append("svg:image")
+  let newcustomers = allcustomers.enter().append("g").attr("class","customer");
+  
+	newcustomers.append("svg:image")
 	 .attr("x",function(d){let cell= getLocationCell(d.location); return cell.x+"px";})
 	 .attr("y",function(d){let cell= getLocationCell(d.location); return cell.y+"px";})
 	 .attr("width", Math.min(cellWidth,cellHeight)+"px")
 	 .attr("height", Math.min(cellWidth,cellHeight)+"px")
 	 .attr("xlink:href",function(d){return d.url});// Possible to change this to include two images
 
-	// For the existing patients, we want to update their location on the screen
+	// For the existing customers, we want to update their location on the screen
 	// but we would like to do it with a smooth transition from their previous position.
 	// D3 provides a very nice transition function allowing us to animate transformations of our svg elements.
 
-	//First, we select the image elements in the allpatients list
-	let images = allpatients.selectAll("image");
+	//First, we select the image elements in the allcustomers list
+	let images = allcustomers.selectAll("image");
 	// Next we define a transition for each of these image elements.
 	// Note that we only need to update the attributes of the image element which change
 	images.transition()
@@ -750,55 +728,56 @@ function addDynamicAgents() {
     let doorLength = 3;
     let initialCol = Math.floor(Math.random() * doorLength + doorStartCol);
 
-		let newpatient = new NonCollidingAgent(1, "A", initialRow, initialCol, grid,"images/girl.png", currentTime);
+		let newcustomer = new NonCollidingAgent(1, "A", initialRow, initialCol, grid,"images/girl.png", currentTime);
 
 
 		let customerType = Math.floor(Math.random()*5);
 		switch (customerType) {
 				case 0:
-				    newpatient.type = "A";
-						newpatient.url = "images/girl.png" ;
+				    newcustomer.type = "A";
+						newcustomer.url = "images/girl.png" ;
 				break;
 
 				case 1 :
-				     newpatient.type = "B";
-				     newpatient.url = "images/boy.png" ;
+				     newcustomer.type = "B";
+				     newcustomer.url = "images/boy.png" ;
 				break;
 
 				case 2:
-						newpatient.type = "C";
-						newpatient.url = "images/old-woman.png" ;
+						newcustomer.type = "C";
+						newcustomer.url = "images/old-woman.png" ;
 				break;
 
 				case 3 :
-						 newpatient.type = "D";
-						 newpatient.url = "images/minion.png" ;
+						 newcustomer.type = "D";
+						 newcustomer.url = "images/minion.png" ;
 				break;
 				case 4 :
-						 newpatient.type = "E";
-						 newpatient.url = "images/family.png" ;
+						 newcustomer.type = "E";
+						 newcustomer.url = "images/family.png" ;
 
 	}
-	patients.push(newpatient);
+	customers.push(newcustomer);
 
 }}
 
-function updatePatient(patientIndex){
-	//patientIndex is an index into the patients data array
-	patientIndex = Number(patientIndex); //it seems patientIndex was coming in as a string
-	let patient = patients[patientIndex];
-  patient.move();
+function updatePatient(customerIndex){
+  
+  customerIndex = Number(customerIndex); 
+  
+	let customer = customers[customerIndex];
+  customer.move();
 
   //Exit Condition
   let cashier_row = right_cashier.position.startRow + right_cashier.numRows;
   let cashier_col = right_cashier.position.startCol + right_cashier.numCols;
-	if (patient.location.col >= cashier_col - 10 && patient.location.row >= cashier_row + 3) {
-    patient.state = EXITED;
-    // free up patient's location
-    grid.freeLocation(patient.location)
+	if (customer.location.col >= cashier_col - 10 && customer.location.row >= cashier_row + 3) {
+    customer.state = EXITED;
+    // free up customer's location
+    grid.freeLocation(customer.location)
     // update stats
-    let timeInSystem = currentTime - patient.timeEntered;
-    let timeInQueue = patient.timePaying - patient.timeQueued - 10; 
+    let timeInSystem = currentTime - customer.timeEntered;
+    let timeInQueue = customer.timePaying - customer.timeQueued - 10; 
     statistics[0].cumulativeTime += timeInSystem;
     statistics[0].count += 1;
     statistics[1].cumulativeTime += timeInQueue;
@@ -807,25 +786,25 @@ function updatePatient(patientIndex){
 }
 
 function removeDynamicAgents(){
-	// We need to remove patients who have been discharged.
-	//Select all svg elements of class "patient" and map it to the data list called patients
-	let allCustomers = surface.selectAll(".patient").data(patients);
-	//Select all the svg groups of class "patient" whose state is EXITED
+	// We need to remove customers who have been discharged.
+	//Select all svg elements of class "customer" and map it to the data list called customers
+	let allCustomers = surface.selectAll(".customer").data(customers);
+	//Select all the svg groups of class "customer" whose state is EXITED
 	let exitingCustomers = allCustomers.filter(function(d,i){return d.state==EXITED;});
-	// Remove the svg groups of EXITED patients: they will disappear from the screen at this point
+	// Remove the svg groups of EXITED customers: they will disappear from the screen at this point
 	exitingCustomers.remove();
 
-	// Remove the EXITED patients from the patients list using a filter command
-	patients = patients.filter(function(d){return d.state!=EXITED;});
-	// At this point the patients list should match the images on the screen one for one
-	// and no patients should have state EXITED
+	// Remove the EXITED customers from the customers list using a filter command
+	customers = customers.filter(function(d){return d.state!=EXITED;});
+	// At this point the customers list should match the images on the screen one for one
+	// and no customers should have state EXITED
 }
 
 
 function updateDynamicAgents(){
 	// loop over all the agents and update their states
-	for (let patientIndex in patients){
-		updatePatient(patientIndex);
+	for (let customerIndex in customers){
+		updatePatient(customerIndex);
 	}
 	updateSurface();
 }
