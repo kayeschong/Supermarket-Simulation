@@ -23,22 +23,41 @@
 
 	<div id="title"  style="position:absolute;bottom:0;left:0">Basic Agent-Based Model</div>
 
-	<div id="controls" style="position:absolute;bottom:0;left:35%">Animation Speed:
+	<div id="controls" style="position:absolute;bottom:0;left:30%">Animation Speed:
 		<input id="slider1" type="range" min="0" value:"50" max="250" step="10" onchange="redrawWindow();" />
 	</div>
-	<div id="controls2" style="position:absolute;bottom:4%;left:37%">Arrival Rate:
-		<input id="slider2" type="range" min="0.1" value:"0.5" max="1" step="0.1" onchange="redrawWindow();" />
+	<div id="controls2" style="position:absolute;bottom:4%;left:32%">Arrival Rate:
+		<input id="slider2" type="range" min="0.000" value:"0.1" max="0.2" step="0.01" onchange="redrawWindow();" />
 		<p><span id="rate"></span></p>
 	</div>
 	<script>
-		var slider = document.getElementById("slider2");
-		var output = document.getElementById("rate");
-		output.innerHTML = slider.value;
+		var slider2 = document.getElementById("slider2");
+		var output2 = document.getElementById("rate");
+		output2.innerHTML = slider2.value;
 		
-		slider.oninput = function() {
-			output.innerHTML = this.value;
+		slider2.oninput = function() {
+			output2.innerHTML = this.value;
 		}
 	</script>
+
+	<div id="controls3" style="position:absolute;bottom:0%;left:50%">Cashier speed:
+		<input id="slider3" type="range" min="-20" value:"0" max="20" step="1" />
+	</div>
+
+	<div id="controls4" style="position:absolute;bottom:4%;left:50%">Thin rate:
+		<input id="slider4" type="range" min="0" value:"0.9" max="1" step="0.1"/>
+		<p><span id="thinRate"></span></p>
+	</div>
+	<script>
+		var slider4 = document.getElementById("slider4");
+		var output4 = document.getElementById("thinRate");
+		output4.innerHTML = slider4.value;
+		
+		slider4.oninput = function() {
+			output4.innerHTML = this.value;
+		}
+	</script>
+
 	<a id="credits" href="https://www.freeiconspng.com/" style="position:absolute;bottom:0;right:0">Svg Icon Supermarket</a>
   	<a id ='credits' href="https://www.freepik.com/free-photos-vectors/background" style="position:absolute;bottom:0;left : 72%">freepik</a>
 	<a id ='credits' href="https://www.flaticon.com/" style="position:absolute;bottom:0;left : 65%">flaticon</a>

@@ -115,22 +115,6 @@ function insertPosition(relativePosition,addRow,addCol,numRows=window.numRows){
   }
 
 
-class Static {
-	constructor(type, label, row, col, url, grid, state = IDLE) {
-        this.type = type
-        this.label = label;
-        this.location = {
-            "row": row,
-            "col": col,
-        };
-        this.state = state;
-        this.url = url;
-		this.grid = grid;
-		this.grid.fillLocation(this.location);
-    }
-}
-// static list, populated with the cashier, receptionist, will be adding those static items such as the shelves object
-
 class Area {
 	constructor(label, startRow, numRows, startCol, numCols,url,
 			    fillColor='white', outlineColor='black', outlineWidth=1) {
@@ -220,7 +204,7 @@ class NonCollidingAgent {
         console.log('cashier zone');
         console.log(row);
         console.log(right_cashier.position.startRow, right_cashier.position.startRow + 3);
-        return [0, 1, 30, 0, 0]
+        return [0, 1, cashierDelay, 0, 0]
       }
 
 
@@ -404,36 +388,8 @@ const urlCashier1 = "images/cashier.png";
 const urlCashier2 = "images/cashier.png";
 //const urlReceptionist ="images/receptionist-icon.png"
 
-// Locations
-let doctorLocation = {"row": 10, "col": 20};
-let receptionistLocation = {"row": 1, "col": 20};
-let doctorRow = 10;
-let doctorCol = 20;
-let receptionistRow = 1;
-let receptionistCol = 20;
 
-//a patient enters the hospital UNTREATED; he or she then is QUEUEING to be treated by a doctor;
-// then INTREATMENT with the doctor; then TREATED;
-// When the patient is DISCHARGED he or she leaves the clinic immediately at that point.
-const UNTREATED=0;
-const WAITING=1;
-const STAGING=2;
-const INTREATMENT =3;
-const TREATED=4;
-const DISCHARGED=5;
-const EXITED = 6;
-
-// The doctor can be either BUSY treating a patient, or IDLE, waiting for a patient
-const IDLE = 0;
-const BUSY = 1;
-
-// There are two types of caregivers in our system: doctors and receptionists
-const DOCTOR = 0;
-const RECEPTIONIST = 1;
-
-//
-const EMPTY = 0;
-const OCCUPIED = 1;
+const EXITED = 0;
 
 // patients is a dynamic list, initially empty
 let patients = [];
@@ -448,9 +404,11 @@ let grid;
 let areas;
 let staticList;
 let nextArrivalTime;
-let rate=0.5;
+let rate=0.1;
 let bottomRow;
 let right_cashier;
+let cashierDelay = 30;
+let thinRate = 1;
 
 // This next function is executed when the script is loaded. It contains the page initialization code.
 (function() {
@@ -480,8 +438,8 @@ function redrawWindow(){
 	animationDelay = 251 - document.getElementById("slider1").value;
   simTimer = window.setInterval(simStep, animationDelay); // call the function simStep every animationDelay milliseconds
 
-
   rate = document.getElementById("slider2").value;
+  
   nextArrivalTime = generateDiscreteExpTime(rate);
   statistics[0].cumulativeTime = 0;
   statistics[0].count = 0;
@@ -576,8 +534,6 @@ function redrawWindow(){
   let trolley3 = new NonCollidingArea('rightPole',  scale(1), 1, grid,"images/trolley2.png",bottomMiddle,scale(3),2);
 
 
-  //console.log(test)
-  //console.log(test.position.startCol)
   //EntranceArea
   let open = new NonCollidingArea('open',  scale(3), 3, grid,"images/open.png",bottomLeft,scale(5),10);
   let trolley4 = new NonCollidingArea('rightPole',  scale(1), 1, grid,"images/trolley2.png",bottomLeft,scale(4),14);
@@ -644,22 +600,9 @@ function redrawWindow(){
   const firstItemRow = firstBlockRow+6;
   const firstItemCol = firstBlockCol;
 
-
-
-	let doctor = new Static(1,'Doctor',lastBlockRow+5,firstBlockCol+14,"images/cashier.png",grid)
-	let receptionist = new Static(2,'Receptionist',receptionistRow,receptionistCol,"images/cashier.png",grid)
-	staticList = []
-
-
-
-
-	// Re-initialize simulation letiables
-
-	currentTime = 0;
-	doctor.state=IDLE;
-	patients = [];
-
-
+  currentTime = 0;
+  staticList = [];
+  patients = [];
 
 
 
@@ -757,18 +700,6 @@ function updateSurface(){
   // .attr("position",absolute)
 
 
-
-	// It would be nice to label the caregivers, so we add a text element to each new caregiver group
-	/*newcaregivers.append("text")
-    .attr("x", function(d) { let cell= getLocationCell(d.location); return (cell.x+cellWidth/2)+"px"; })
-    .attr("y", function(d) { let cell= getLocationCell(d.location); return (cell.y+cellHeight)+"px"; })
-    .attr("dy", ".35em")
-    .text(function(d) { return d.label; });*/
-
-	// The simulation should serve some purpose
-	// so we will compute and display the average length of stay of each patient type.
-	// We created the array "statistics" for this purpose.
-	// Here we will create a group for each element of the statistics array (two elements)
 	let allstatistics = surface.selectAll(".statistics").data(statistics);
 	let newstatistics = allstatistics.enter().append("g").attr("class","statistics");
 	// For each new statistic group created we append a text label
@@ -786,7 +717,8 @@ function updateSurface(){
 		return d.name+avgLengthOfStay.toFixed(1); }); //The toFixed() function sets the number of decimal places to display
 	// allstatistics.selectAll("text").text( d => d.rejected);
 
-
+  thinRate = document.getElementById('slider4').value;
+  cashierDelay = 30 - document.getElementById("slider3").value;
 
 }
 
@@ -799,7 +731,7 @@ function generateDiscreteExpTime(rate) {
 
 function thinPoisson(probAccept) {
   let U = Math.random();
-  return probAccept < U;
+  return probAccept > U;
 }
 
 function addDynamicAgents() {
@@ -808,7 +740,7 @@ function addDynamicAgents() {
   let arrivalApproved = false;
 
 	if (nextArrivalTime == currentTime) {
-    arrivalApproved = thinPoisson(0.9);
+    arrivalApproved = thinPoisson(thinRate);
     nextArrivalTime += generateDiscreteExpTime(rate);
   }
 
