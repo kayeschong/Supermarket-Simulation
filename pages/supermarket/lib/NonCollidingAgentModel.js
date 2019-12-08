@@ -682,8 +682,8 @@ function updateSurface(){
 	newstatistics.append("text")
 	.attr("x", function(d) { let cell= getLocationCell(d.location); return (cell.x+cellWidth)+"px"; })
 	.attr("y", function(d) { let cell= getLocationCell(d.location); return (cell.y+cellHeight/2)+"px"; })
-    .attr("dy", ".35em")
-    .text("");
+  .attr("dy", ".35em")
+  .text("");
 
 	// The data in the statistics array are always being updated.
 	// So, here we update the text in the labels with the updated information.
